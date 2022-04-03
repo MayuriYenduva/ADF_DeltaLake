@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "movies_datalake_deltalake",
+				"name": "movies_datalake_deltalake_test",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
