@@ -1,0 +1,70 @@
+{
+	"name": "DF_transformations_update",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_source_movies_input",
+						"type": "DatasetReference"
+					},
+					"name": "dftransformationsupdate"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "sourcedatalakestorage_movies",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filter"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "alterRow1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          movies as string,",
+				"          Title as string,",
+				"          genresgenregenre as string,",
+				"          YEAR as integer,",
+				"          Rating as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> dftransformationsupdate",
+				"dftransformationsupdate filter(YEAR == 1950 || YEAR == 1988 || YEAR == 1960) ~> filter",
+				"filter derive(Rating = iif(YEAR==1950,1,toInteger(Rating))) ~> derivedColumn1",
+				"derivedColumn1 alterRow(updateIf(YEAR==1950)) ~> alterRow1",
+				"alterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'delta',",
+				"     fileSystem: 'output',",
+				"     mergeSchema: false,",
+				"     autoCompact: false,",
+				"     optimizedWrite: false,",
+				"     vacuum: 0,",
+				"     deletable:false,",
+				"     insertable:false,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['movies','YEAR'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
